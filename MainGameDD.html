@@ -62,7 +62,7 @@
     <div id="error-screen"><h1>⚠️ FILE ERROR ⚠️</h1><p id="error-msg"></p></div>
     <div id="loading-screen">
         <div class="title-frame">
-            <img class="bg-img" src="Photos/TitleBG.jpg" alt="Drive Deo v1.2 title screen">
+            <img class="bg-img" src="Photos/Untitled Project (8).jpg" alt="Drive Deo v1.2 title screen">
             <button id="startBtn" class="title-hitbox" aria-label="Play"></button>
             <a id="webBtn" class="title-hitbox" href="https://sites.google.com/view/drivedeo/home" target="_blank" rel="noopener" aria-label="Offical Web"></a>
         </div>
@@ -180,6 +180,12 @@ window.addEventListener('keydown', e => {
     if (gameOver || paused || inCountdown || hasFatalError) return;
     if (['Space','ArrowUp','KeyW'].includes(e.code) && player.jumps < 2) { player.dy = -16; player.jumps++; }
     if (['KeyS','ArrowDown'].includes(e.code)) playerProjectiles.push({ x: player.x, y: player.y + 25, vx: -16 });
+});
+
+// MOUSE CLICK TO JUMP
+canvas.addEventListener('mousedown', () => {
+    if (gameOver || paused || inCountdown || hasFatalError) return;
+    if (player.jumps < 2) { player.dy = -16; player.jumps++; }
 });
 
 function togglePause() {
