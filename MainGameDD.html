@@ -11,49 +11,27 @@
         
         #error-screen { position: absolute; width: 100%; height: 100%; background: #000; color: #ff4444; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 40px; z-index: 10000; border: 10px solid #ff4444; box-sizing: border-box; }
 
-        /* ===== V1.2 TITLE SCREEN ===== */
+        /* ===== V1.2 TITLE SCREEN (uses actual background image) ===== */
         #loading-screen {
             position: absolute; width: 100%; height: 100%; z-index: 500; overflow: hidden;
-            display: flex; flex-direction: column; justify-content: space-between;
-            background: linear-gradient(180deg, #7ec8f2 0%, #bfe4fb 22%, #c9614a 22%, #c9614a 88%, #b7b7ad 88%, #b7b7ad 100%);
+            background: #74c6f2; /* letterbox fallback matching sky */
+            display: flex; align-items: center; justify-content: center;
         }
-        #loading-screen::before {
-            /* clouds */
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 24%; pointer-events: none;
-            background:
-                radial-gradient(60px 26px at 12% 55%, rgba(255,255,255,0.95), transparent 70%),
-                radial-gradient(45px 20px at 20% 40%, rgba(255,255,255,0.9), transparent 70%),
-                radial-gradient(70px 30px at 68% 60%, rgba(255,255,255,0.9), transparent 70%),
-                radial-gradient(50px 22px at 78% 35%, rgba(255,255,255,0.9), transparent 70%),
-                radial-gradient(55px 24px at 90% 65%, rgba(255,255,255,0.85), transparent 70%);
+        .title-frame {
+            position: relative;
+            width: 100%; height: 100%;
+            max-width: calc(100vh * 1920 / 1080);
+            max-height: calc(100vw * 1080 / 1920);
+            margin: auto;
         }
-        #loading-screen::after {
-            /* brick wall texture */
-            content: ""; position: absolute; top: 22%; left: 0; width: 100%; height: 66%; pointer-events: none;
-            background-color: #c9614a;
-            background-image:
-                linear-gradient(rgba(0,0,0,0.18) 3px, transparent 3px),
-                linear-gradient(90deg, rgba(0,0,0,0.18) 3px, transparent 3px),
-                linear-gradient(90deg, rgba(0,0,0,0.18) 3px, transparent 3px);
-            background-size: 90px 40px, 90px 40px, 90px 40px;
-            background-position: 0 0, 0 0, 45px 20px;
-        }
-        .title-row { position: relative; z-index: 2; display: flex; justify-content: space-between; align-items: flex-start; padding: 30px 40px 0; }
-        .bubble-text { font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif; font-weight: 900; line-height: 0.9; -webkit-text-stroke: 7px #000; paint-order: stroke fill; text-shadow: 6px 6px 0 rgba(0,0,0,0.35); }
-        .title-main { font-size: clamp(48px, 8vw, 100px); background: linear-gradient(180deg, #fff3a0, #ffb703); -webkit-background-clip: text; background-clip: text; color: #ffb703; }
-        .title-sub { font-size: clamp(20px, 3vw, 34px); background: linear-gradient(180deg, #fff3a0, #ffb703); -webkit-background-clip: text; background-clip: text; color: #ffb703; margin-left: 6px; align-self: flex-start; margin-top: 8px; }
-        .title-left { display: flex; align-items: flex-start; }
-        .version-badge { font-size: clamp(22px, 3.2vw, 40px); text-align: right; -webkit-text-stroke: 5px #000; background: linear-gradient(180deg, #fff3a0, #ffb703); -webkit-background-clip: text; background-clip: text; color: #ffb703; }
+        .title-frame .bg-img { width: 100%; height: 100%; display: block; object-fit: contain; }
 
-        #bottleFrame { position: absolute; top: 34%; left: 50%; transform: translate(-50%, -50%) rotate(-12deg); z-index: 2; width: 160px; height: 160px; background: linear-gradient(135deg, #cfcfcf, #8f8f8f); border: 6px solid #fff; box-shadow: 0 10px 25px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; overflow: hidden; }
-        #bottleFrame img { width: 70%; height: auto; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.4)); }
-
-        .menu-buttons { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; gap: 18px; padding-bottom: 70px; }
-        .title-btn { font-family: 'Arial Black', 'Arial Bold', Gadget, sans-serif; font-weight: 900; font-size: clamp(22px, 3vw, 34px); color: #fff; -webkit-text-stroke: 2px #000; paint-order: stroke fill; padding: 14px 60px; border-radius: 14px; border: 5px solid #fff; box-shadow: 0 6px 0 rgba(0,0,0,0.35), inset 0 3px 0 rgba(255,255,255,0.35); cursor: pointer; text-transform: uppercase; transition: transform 0.1s; }
-        .title-btn:hover { transform: translateY(-3px); }
-        .title-btn:active { transform: translateY(2px); box-shadow: 0 2px 0 rgba(0,0,0,0.35); }
-        #startBtn { background: linear-gradient(180deg, #ff5a4e, #d81e1e); }
-        #webBtn { background: linear-gradient(180deg, #8fe26a, #4caf22); text-decoration: none; display: inline-block; }
+        /* Invisible click targets sitting exactly over the PLAY / OFFICAL WEB
+           graphics already baked into the background image. Positions are
+           percentages of .title-frame so they stay aligned at any screen size. */
+        .title-hitbox { position: absolute; background: transparent; border: none; cursor: pointer; display: block; }
+        #startBtn { left: 30.5%; top: 56.5%; width: 16%; height: 7.8%; }
+        #webBtn { left: 30.5%; top: 70%; width: 32.5%; height: 9%; }
         
         #pause-overlay { position: absolute; width: 100%; height: 100%; background: rgba(0, 5, 0, 0.98); display: none; justify-content: center; align-items: center; z-index: 1000; gap: 20px; }
         .menu-sidebar { display: flex; flex-direction: column; gap: 10px; width: 200px; }
@@ -83,19 +61,10 @@
 
     <div id="error-screen"><h1>⚠️ FILE ERROR ⚠️</h1><p id="error-msg"></p></div>
     <div id="loading-screen">
-        <div class="title-row">
-            <div class="title-left">
-                <span class="bubble-text title-main">DRIVE</span>
-                <span class="bubble-text title-sub">DEO</span>
-            </div>
-            <div class="bubble-text version-badge">V1.2<br>IS HERE</div>
-        </div>
-
-        <div id="bottleFrame"><img src="Photos/bottle.png" alt="deodorant"></div>
-
-        <div class="menu-buttons">
-            <button id="startBtn" class="title-btn">PLAY</button>
-            <a id="webBtn" class="title-btn" href="https://sites.google.com/view/drivedeo/home" target="_blank" rel="noopener">OFFICAL WEB</a>
+        <div class="title-frame">
+            <img class="bg-img" src="Photos/TitleBG.jpg" alt="Drive Deo v1.2 title screen">
+            <button id="startBtn" class="title-hitbox" aria-label="Play"></button>
+            <a id="webBtn" class="title-hitbox" href="https://sites.google.com/view/drivedeo/home" target="_blank" rel="noopener" aria-label="Offical Web"></a>
         </div>
     </div>
     <div id="countdown-text">3</div>
@@ -278,11 +247,16 @@ function draw() {
     ctx.drawImage(images.bottle, lx + 130, groundY - 70, 50, 50);
     playerProjectiles.forEach(dp => ctx.drawImage(images.dove, dp.x, dp.y, 40, 40));
     
-    // CYAN SHADOWS FOR WATA
+    // SHADOW FOR WATA (cyan glow + offset drop shadow)
     projectiles.forEach(p => {
-        ctx.save(); 
-        ctx.shadowBlur = 25; ctx.shadowColor = "cyan"; 
-        ctx.drawImage(images.wata, p.x, p.y, 55, 55); 
+        ctx.save();
+        ctx.shadowBlur = 20; ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowOffsetX = 6; ctx.shadowOffsetY = 8;
+        ctx.drawImage(images.wata, p.x, p.y, 55, 55);
+        ctx.restore();
+
+        ctx.save();
+        ctx.shadowBlur = 25; ctx.shadowColor = "cyan"; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
+        ctx.drawImage(images.wata, p.x, p.y, 55, 55);
         ctx.restore();
     });
 
