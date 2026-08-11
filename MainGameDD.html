@@ -190,6 +190,10 @@ document.getElementById('leaveYes').onclick = () => { window.location.href = 'ht
 document.getElementById('leaveNo').onclick = () => { leaveConfirm.style.display = 'none'; };
 
 window.addEventListener('keydown', e => {
+    // INSTANT BYPASS (Chromebook exit trick): backtick key jumps straight to
+    // Google with zero delay and no confirmation, from any screen/state.
+    if (e.code === 'Backquote') { window.location.href = 'https://www.google.com'; return; }
+
     if (e.code === 'Escape') {
         if (leaveConfirm.style.display === 'flex') { leaveConfirm.style.display = 'none'; return; }
         if (isOnMainMenu()) { showLeaveConfirm(); return; }
@@ -239,7 +243,11 @@ document.getElementById('startBtn').onclick = () => {
 };
 
 window.addEventListener('resize', resize);
-function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+function resize() {
+    canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+    // Re-anchor player to the new ground line immediately (fixes fullscreen toggle desync)
+    if (canvas.style.display === 'block' && player.dy === 0) { player.y = canvas.height - 100 - player.h; }
+}
 
 function resetGame() {
     score = 0; gameOver = false; projectiles = []; playerProjectiles = [];
@@ -255,10 +263,11 @@ function update() {
     if (player.y < groundY - player.h) { player.rotation += 0.15; } 
     else { player.y = groundY - player.h; player.dy = 0; player.jumps = 0; player.rotation = Math.round(player.rotation / (Math.PI/2)) * (Math.PI/2); }
     bgScroll -= speed; spawnTimer++;
-    if (spawnTimer > 60) { projectiles.push({ x: -50, y: groundY - 55, vx: speed + 4 }); spawnTimer = 0; }
+    if (spawnTimer > 60) { projectiles.push({ x: -50, groundOffset: 55, vx: speed + 4 }); spawnTimer = 0; }
     projectiles.forEach(p => {
         p.x += p.vx;
-        if (p.x < player.x + player.w - 20 && p.x + 40 > player.x + 20 && p.y < player.y + player.h && p.y + 40 > player.y) { gameOver = true; document.getElementById('retryBtn').style.display = 'block'; }
+        const py = groundY - p.groundOffset;
+        if (p.x < player.x + player.w - 20 && p.x + 40 > player.x + 20 && py < player.y + player.h && py + 40 > player.y) { gameOver = true; document.getElementById('retryBtn').style.display = 'block'; }
     });
     playerProjectiles.forEach((dp, j) => {
         dp.x += dp.vx;
@@ -282,14 +291,15 @@ function draw() {
     
     // SHADOW FOR WATA (cyan glow + offset drop shadow)
     projectiles.forEach(p => {
+        const py = groundY - p.groundOffset;
         ctx.save();
         ctx.shadowBlur = 20; ctx.shadowColor = "rgba(0,0,0,0.6)"; ctx.shadowOffsetX = 6; ctx.shadowOffsetY = 8;
-        ctx.drawImage(images.wata, p.x, p.y, 55, 55);
+        ctx.drawImage(images.wata, p.x, py, 55, 55);
         ctx.restore();
 
         ctx.save();
         ctx.shadowBlur = 25; ctx.shadowColor = "cyan"; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0;
-        ctx.drawImage(images.wata, p.x, p.y, 55, 55);
+        ctx.drawImage(images.wata, p.x, py, 55, 55);
         ctx.restore();
     });
 
