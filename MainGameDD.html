@@ -69,6 +69,14 @@
     </div>
     <div id="countdown-text">3</div>
 
+    <div id="leave-confirm" style="display:none; position:absolute; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:2500; flex-direction:column; justify-content:center; align-items:center; color:#fff; font-family:'Courier New', monospace; text-align:center;">
+        <p style="font-size:28px; margin-bottom:24px;">Leave Drive Deodorant?</p>
+        <div style="display:flex; gap:50px; font-size:24px;">
+            <span id="leaveYes" style="cursor:pointer; text-decoration:underline;">Yes</span>
+            <span id="leaveNo" style="cursor:pointer; text-decoration:underline;">No</span>
+        </div>
+    </div>
+
     <div id="pause-overlay">
         <div class="menu-sidebar">
             <button class="menu-btn" onclick="togglePause()">Continue</button>
@@ -175,8 +183,18 @@ for (let key in sources) {
     images[key].src = sources[key];
 }
 
+const leaveConfirm = document.getElementById('leave-confirm');
+function isOnMainMenu() { return document.getElementById('loading-screen').style.display !== 'none'; }
+function showLeaveConfirm() { leaveConfirm.style.display = 'flex'; }
+document.getElementById('leaveYes').onclick = () => { window.location.href = 'https://www.google.com'; };
+document.getElementById('leaveNo').onclick = () => { leaveConfirm.style.display = 'none'; };
+
 window.addEventListener('keydown', e => {
-    if (e.code === 'Escape') togglePause();
+    if (e.code === 'Escape') {
+        if (leaveConfirm.style.display === 'flex') { leaveConfirm.style.display = 'none'; return; }
+        if (isOnMainMenu()) { showLeaveConfirm(); return; }
+        togglePause();
+    }
     if (gameOver || paused || inCountdown || hasFatalError) return;
     if (['Space','ArrowUp','KeyW'].includes(e.code) && player.jumps < 2) { player.dy = -16; player.jumps++; }
     if (['KeyS','ArrowDown'].includes(e.code)) playerProjectiles.push({ x: player.x, y: player.y + 25, vx: -16 });
@@ -193,6 +211,15 @@ function togglePause() {
     if (!paused) { paused = true; document.getElementById('pause-overlay').style.display = 'flex'; }
     else { document.getElementById('pause-overlay').style.display = 'none'; startCountdown(); }
 }
+
+// AUTO-PAUSE ON TAB/SCREEN SWITCH (fixes Chromebook catch-up glitch where
+// projectiles bunch up above/below the player after coming back to the tab)
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden && !paused && !gameOver && !hasFatalError && !inCountdown && canvas.style.display === 'block') {
+        paused = true;
+        document.getElementById('pause-overlay').style.display = 'flex';
+    }
+});
 
 function startCountdown() {
     paused = true; inCountdown = true; countdownEl.style.display = 'block';
